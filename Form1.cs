@@ -1,12 +1,6 @@
-using Microsoft.VisualBasic.Devices;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 
 namespace keyboard_capture_v2
 {
@@ -48,7 +42,8 @@ namespace keyboard_capture_v2
 
 			if (keyboard.totalSamples > 0)
 			{
-				string resultPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + $"\\result - {keyboard.totalSamples} samples ";
+				//string resultPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + $"\\result - {keyboard.totalSamples} samples ";
+				string resultPath = Environment.CurrentDirectory + $"\\result - {keyboard.totalSamples} samples ";
 				while (File.Exists(resultPath[0..(resultPath.Length - 1)] + ".json"))
 					resultPath += $"{wordsEn[rnd.Next(wordsEn.Count)]} ";
 				resultPath = resultPath[0..(resultPath.Length - 1)] + ".json";
