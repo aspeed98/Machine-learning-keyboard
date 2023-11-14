@@ -68,24 +68,12 @@ namespace keyboard_capture_v2
 			}
 			return new Keyboard();
 		}
-		private Keyboard combined(string path1, string path2)
-		{
-			Keyboard kb = new Keyboard(path1);
-			Keyboard nb = new Keyboard(path2);
-			if (kb.totalSamples > 0 && nb.totalSamples > 0)
-				return combined(kb, nb);
-			else if (kb.totalSamples > 0)
-				return kb;
-			else if (nb.totalSamples > 0)
-				return nb;
-			return new Keyboard();
-		}
 		private Keyboard combined(List<Keyboard> kbs)
 		{
 			if (kbs.Count > 0)
 			{
-				Keyboard ret = kbs[0];
-				for (int i = 1; i < kbs.Count; i++)
+				Keyboard ret = new Keyboard();
+				for (int i = 0; i < kbs.Count; i++)
 					ret = combined(ret, kbs[i]);
 				return ret;
 			}
@@ -131,6 +119,9 @@ namespace keyboard_capture_v2
 				if (nb.keypads.Count > kb.keypads.Count)
 					for (int i = last; i < nb.keypads.Count; i++)
 						kb.keypads.Add(nb.keypads[i]);
+				kb.precision = (kb.precision * kb.totalSamples + nb.precision * nb.totalSamples) / (kb.totalSamples + nb.totalSamples);
+				kb.reaction = (kb.reaction * kb.totalSamples + nb.reaction * nb.totalSamples) / (kb.totalSamples + nb.totalSamples);
+				kb.downtime = (kb.downtime * kb.totalSamples + nb.downtime * nb.totalSamples) / (kb.totalSamples + nb.totalSamples);
 				kb.totalSamples += nb.totalSamples;
 				return kb;
 			}
@@ -207,7 +198,7 @@ namespace keyboard_capture_v2
 				}
 				lastInput = allkeys[index].origin;
 			}
-			lastDate = DateTime.Now;
+			lastDate = now;
 		}
 
 		private void inputBox_KeyUp(object sender, KeyEventArgs e)
@@ -226,7 +217,7 @@ namespace keyboard_capture_v2
 					pressedKeys.RemoveAt(i); i--;
 				}
 			}
-			lastDate = DateTime.Now;
+			//lastDate = DateTime.Now;
 		}
 
 		private void wordLabel_MouseDown(object sender, MouseEventArgs e)
@@ -607,11 +598,26 @@ namespace keyboard_capture_v2
 	public class Keyboard
 	{
 		public int totalSamples { get; set; }
+		public double precision { get; set; }
+		public int reaction { get; set; }
+		public int downtime { get; set; }
 		public List<KeyPad> keypads { get; set; }
 		public Keyboard(List<KeyPad> keypads)
 		{
 			this.totalSamples = keypads.Select(zxc => zxc.samples).Sum();
-			this.keypads = keypads;
+			if (this.totalSamples > 0)
+			{
+				this.precision = keypads.Select(zxc => zxc.precision * zxc.samples).Sum() / this.totalSamples;
+				this.reaction = keypads.Select(zxc => zxc.reaction * zxc.samples).Sum() / this.totalSamples;
+				this.downtime = keypads.Select(zxc => zxc.downtime * zxc.samples).Sum() / this.totalSamples;
+			}
+			else
+			{
+				this.precision = 0;
+				this.reaction = 0;
+				this.downtime = 0;
+			}
+			this.keypads = new List<KeyPad>(keypads);
 		}
 		public Keyboard(string json, bool isFile = true)
 		{
@@ -623,22 +629,44 @@ namespace keyboard_capture_v2
 			if (result == null)
 			{
 				this.totalSamples = 0;
+				this.precision = 0;
+				this.reaction = 0;
+				this.downtime = 0;
 				this.keypads = new List<KeyPad>();
 			}
 			else
 			{
 				this.totalSamples = result.keypads.Select(zxc => zxc.samples).Sum();
+				if (this.totalSamples > 0)
+				{
+					this.precision = result.keypads.Select(zxc => zxc.precision * zxc.samples).Sum() / this.totalSamples;
+					this.reaction = result.keypads.Select(zxc => zxc.reaction * zxc.samples).Sum() / this.totalSamples;
+					this.downtime = result.keypads.Select(zxc => zxc.downtime * zxc.samples).Sum() / this.totalSamples;
+				}
+				else
+				{
+					this.precision = 0;
+					this.reaction = 0;
+					this.downtime = 0;
+				}
 				this.keypads = result.keypads;
 			}
 		}
 		public Keyboard()
 		{
 			this.totalSamples = 0;
+			this.precision = 0;
+			this.reaction = 0;
+			this.downtime = 0;
 			this.keypads = new List<KeyPad>();
 		}
 		public string toJson()
 		{
 			return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+		}
+		public Keyboard copy()
+		{
+			return new Keyboard(this.keypads);
 		}
 	}
 	public class KeyPad
