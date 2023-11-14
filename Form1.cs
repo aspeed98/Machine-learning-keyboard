@@ -49,7 +49,10 @@ namespace keyboard_capture_v2
 				resultPath = resultPath[0..(resultPath.Length - 1)] + ".json";
 
 				File.WriteAllText(resultPath, keyboard.toJson(), Encoding.UTF8);
+				MessageBox.Show($"Created result file with {keyboard.totalSamples} samples.", "Result status");
 			}
+			else
+				MessageBox.Show("No file was created.", "Result status");
 
 			base.OnFormClosing(e);
 		}
@@ -305,6 +308,8 @@ namespace keyboard_capture_v2
 			using (OpenFileDialog dialog = new OpenFileDialog())
 			{
 				dialog.Title = "Select several files to combine...";
+				dialog.Filter = "JSON file|*.json";
+				dialog.InitialDirectory = Environment.CurrentDirectory;
 				dialog.Multiselect = true;
 				dialog.ShowDialog();
 				List<string> paths = dialog.FileNames.ToList();
