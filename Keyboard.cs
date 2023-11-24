@@ -12,11 +12,11 @@ namespace keyboard_capture_v2
 	/// </remarks>
 	public partial class Keyboard
 	{
-		public int totalSamples { get; set; }
-		public double precision { get; set; }
-		public int reaction { get; set; }
-		public int downtime { get; set; }
-		public List<KeyPad> keypads { get; set; }
+		public int totalSamples { get; private set; }
+		public double precision { get; private set; }
+		public int reaction { get; private set; }
+		public int downtime { get; private set; }
+		public List<KeyPad> keypads { get; private set; }
 		public Keyboard(List<KeyPad> keypads)
 		{
 			this.totalSamples = keypads.Select(zxc => zxc.samples).Sum();
