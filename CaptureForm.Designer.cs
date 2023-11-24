@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace keyboard_capture_v2
 {
-	partial class Form1
+	partial class CaptureForm
 	{
 		/// <summary>
 		///  Required designer variable.
