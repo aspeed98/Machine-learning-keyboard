@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "keyboard capture v2", "keyb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB Capture Tests", "..\KB Capture Tests\KB Capture Tests.csproj", "{694B1FE6-FE5D-4FC0-92D0-D8933BB712CE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{58F99645-A055-44F1-9C84-04F04DC0AB4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keyboard Capture", "Keyboard Capture", "{46CE9B6C-CE1A-4D8E-9536-1B2ADB46AB4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F0EC7D48-C51A-427F-AF1F-8E2A2504A1BF} = {46CE9B6C-CE1A-4D8E-9536-1B2ADB46AB4E}
+		{694B1FE6-FE5D-4FC0-92D0-D8933BB712CE} = {58F99645-A055-44F1-9C84-04F04DC0AB4B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F908684-43E2-4858-A463-279F14208DEF}
